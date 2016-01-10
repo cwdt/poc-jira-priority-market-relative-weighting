@@ -1,0 +1,28 @@
+<table>
+    <tr>
+        <td></td>
+        {% for id, stakeholder in grid.stakeholders %}
+            <td>
+                {% if id == me %}
+                    <strong>{{ stakeholder.name }} (<span id="max_votes">{{ stakeholder.allowedVotes }}</span>)</strong>
+                {% else %}
+                    {{ stakeholder.name }} ({{ stakeholder.allowedVotes }})
+                {% endif %}
+            </td>
+        {% endfor %}
+    </tr>
+    {%  for issue in grid.issues  %}
+        <tr>
+            <td><a href="{{ jira_base_url }}/browse/{{ issue.key }}" target="_blank">{{ issue.summary }}<a></td>
+            {% for id, stakeholder in grid.stakeholders %}
+                <td>
+                    {% if id == me %}
+                        <input type="text" value="{{ issue.stakeholders[id] }}" />
+                    {% else %}
+                        {{ issue.stakeholders[id] }}
+                    {% endif %}
+                </td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+</table>

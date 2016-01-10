@@ -1,0 +1,3 @@
+mdv_priority_homepage:
+    path:     /hello-world
+    defaults: { _controller: MDVPriorityBundle:Default:index }

@@ -1,0 +1,24 @@
+MDV\PriorityBundle\Entity\Stakeholder:
+    type: entity
+    table: null
+    repositoryClass: MDV\PriorityBundle\Repository\StakeholderRepository
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        name:
+            type: string
+            length: '30'
+            unique: true
+        ratio:
+            type: float
+        allowedVotes:
+            type: integer
+    oneToMany:
+        votes:
+            targetEntity: Vote
+            mappedBy: stakeholder
+    lifecycleCallbacks: {  }

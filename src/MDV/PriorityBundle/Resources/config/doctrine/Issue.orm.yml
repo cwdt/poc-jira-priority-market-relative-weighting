@@ -1,0 +1,23 @@
+MDV\PriorityBundle\Entity\Issue:
+    type: entity
+    table: null
+    repositoryClass: MDV\PriorityBundle\Repository\IssueRepository
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        jiraKey:
+            type: string
+            length: '10'
+            unique: true
+        summary:
+            type: string
+            length: '255'
+    oneToMany:
+        votes:
+            targetEntity: Vote
+            mappedBy: issue
+    lifecycleCallbacks: {  }

@@ -1,0 +1,7 @@
+mdv_priority:
+    resource: "@MDVPriorityBundle/Resources/config/routing.yml"
+    prefix:   /
+
+app:
+    resource: "@AppBundle/Controller/"
+    type:     annotation

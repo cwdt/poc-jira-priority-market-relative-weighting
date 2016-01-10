@@ -1,0 +1,27 @@
+MDV\PriorityBundle\Entity\Vote:
+    type: entity
+    table: null
+    repositoryClass: MDV\PriorityBundle\Repository\VoteRepository
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        vote:
+            type: integer
+    manyToOne:
+        issue:
+            targetEntity: Issue
+            inversedBy: votes
+            joinColumn:
+                name: issue_id
+                referencedColumnName: id
+        stakeholder:
+            targetEntity: Stakeholder
+            inversedBy: votes
+            joinColumn:
+                name: stakeholder_id
+                referencedColumnName: id
+    lifecycleCallbacks: {  }

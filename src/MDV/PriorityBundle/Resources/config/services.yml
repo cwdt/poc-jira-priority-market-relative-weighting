@@ -1,0 +1,12 @@
+services:
+  mdv.jira.service:
+    class: MDV\PriorityBundle\Service\JiraService
+    autowire: true
+
+  mdv.voting.service:
+    class: MDV\PriorityBundle\Service\VotingService
+    autowire: true
+
+  mdv.vote_grid.service:
+    class: MDV\PriorityBundle\Service\VoteGridService
+    autowire: true
