@@ -2,6 +2,7 @@
 
 namespace MDV\PriorityBundle\Repository;
 use Doctrine\ORM\Query;
+use MDV\PriorityBundle\Entity\Vote;
 
 /**
  * VoteRepository
@@ -22,5 +23,25 @@ class VoteRepository extends \Doctrine\ORM\EntityRepository
         $qb = $this->createQueryBuilder($alias);
         $qb->select("SUM({$alias}.vote)");
         return (int)$qb->getQuery()->execute(null, Query::HYDRATE_SINGLE_SCALAR);
+    }
+
+    /**
+     * @param Vote $vote
+     */
+    public function persist(Vote $vote)
+    {
+        $this->getEntityManager()->persist($vote);
+    }
+
+    /**
+     * @return void
+     */
+    public function flush(Vote $vote = null)
+    {
+        if (null !== $vote) {
+            $this->persist($vote);
+        }
+
+        $this->getEntityManager()->flush();
     }
 }

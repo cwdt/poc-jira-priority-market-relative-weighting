@@ -1,28 +1,82 @@
-<table>
-    <tr>
-        <td></td>
-        {% for id, stakeholder in grid.stakeholders %}
-            <td>
-                {% if id == me %}
-                    <strong>{{ stakeholder.name }} (<span id="max_votes">{{ stakeholder.allowedVotes }}</span>)</strong>
-                {% else %}
-                    {{ stakeholder.name }} ({{ stakeholder.allowedVotes }})
-                {% endif %}
-            </td>
-        {% endfor %}
-    </tr>
-    {%  for issue in grid.issues  %}
+<form method="POST">
+    <table>
         <tr>
-            <td><a href="{{ jira_base_url }}/browse/{{ issue.key }}" target="_blank">{{ issue.summary }}<a></td>
+            <td></td>
             {% for id, stakeholder in grid.stakeholders %}
                 <td>
                     {% if id == me %}
-                        <input type="text" value="{{ issue.stakeholders[id] }}" />
+                        <strong>{{ stakeholder.name }} (<span id="nr_votes">{{ stakeholder.allowedVotes }}</span>)</strong>
                     {% else %}
-                        {{ issue.stakeholders[id] }}
+                        {{ stakeholder.name }} ({{ stakeholder.allowedVotes }})
                     {% endif %}
                 </td>
             {% endfor %}
         </tr>
-    {% endfor %}
-</table>
+        {% for issue in grid.issues %}
+            <tr>
+                <td><a href="{{ jira_base_url }}/browse/{{ issue.key }}" target="_blank">{{ issue.summary }}<a></td>
+                {% for id, stakeholder in grid.stakeholders %}
+                    <td>
+                        {% if id == me %}
+                            <input type="number" class="vote" name="votes[{{ issue.key }}]"
+                                   value="{{ issue.stakeholders[id] }}"  autocomplete="off"/>
+                        {% else %}
+                            {{ issue.stakeholders[id] }}
+                        {% endif %}
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        <tr>
+            <td></td>
+            {% for id, stakeholder in grid.stakeholders %}
+                <td>
+                    {% if id == me %}
+                        <input type="submit" id="vote_button" disabled value="Vote"/>
+                    {% endif %}
+                </td>
+            {% endfor %}
+        </tr>
+    </table>
+</form>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+<script>
+
+    function checkVotes(nrVotes) {
+        var actualVotes = 0;
+        $("input.vote").each(function () {
+            actualVotes += parseInt($(this).val());
+        });
+
+        if (nrVotes === actualVotes) {
+            $("#vote_button").prop('disabled', false);
+        } else {
+            $("#vote_button").prop("disabled", true);
+        }
+    }
+
+    $(document).ready(function () {
+        var nrVotes = parseInt($("#nr_votes").text());
+
+        // Check votes on page ready
+        checkVotes(nrVotes);
+
+        // Check votes on every keyup
+        $(".vote").keyup(function () {
+            // Check votes, enable button if given votes equals allowed votes
+            checkVotes(nrVotes);
+        });
+
+        // Only allow numeric input
+        $(".vote").change(function(){
+            var val = parseInt($(this).val());
+            if (isNaN(val)) {
+                val = 0;
+            }
+            $(this).val(val);
+        });
+    });
+
+</script>

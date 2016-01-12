@@ -6,6 +6,7 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityRepository;
 use MDV\PriorityBundle\Entity\Issue;
 use MDV\PriorityBundle\Entity\Stakeholder;
+use MDV\PriorityBundle\Entity\Vote;
 use MDV\PriorityBundle\Repository\IssueRepository;
 use MDV\PriorityBundle\Repository\SettingsRepository;
 use MDV\PriorityBundle\Repository\StakeholderRepository;
@@ -132,5 +133,35 @@ class VotingService
     public function isOpen()
     {
         return $this->fileSystem->exists($this->votingOpenFile);
+    }
+
+    /**
+     * @param Stakeholder $stakeholder
+     * @param $votes
+     */
+    public function hydrateVotes(Stakeholder $stakeholder, $votes)
+    {
+        if ($stakeholder->getAllowedVotes() !== array_sum($votes)) {
+            throw new \RuntimeException('Amount of votes not allowed');
+        }
+
+        foreach($votes as $key => $value) {
+            // @TODO make more efficient
+            $issue = $this->issueRepository->findOneBy(['jiraKey' => $key]);
+            $vote = $this->voteRepository->findOneBy([
+                'issue' => $issue,
+                'stakeholder' => $stakeholder
+            ]);
+
+            if (null === $vote) {
+                $vote = new Vote();
+                $vote->setIssue($issue);
+                $vote->setStakeholder($stakeholder);
+            }
+
+            $vote->setVote($value);
+            $this->voteRepository->persist($vote);
+        }
+        $this->voteRepository->flush();
     }
 }
