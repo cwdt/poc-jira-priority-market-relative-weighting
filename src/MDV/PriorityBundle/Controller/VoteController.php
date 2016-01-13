@@ -14,6 +14,12 @@ class VoteController extends Controller
     {
         // TODO insert flashmessages (session flashbag)
 
+        /** @var VotingService $votingService */
+        $votingService = $this->get('mdv.voting.service');
+        if (!$votingService->isOpen()) {
+            return $this->render('MDVPriorityBundle:Default:closed.html.twig');
+        }
+
         $stakeholder = $this->getDoctrine()->getRepository('MDVPriorityBundle:Stakeholder')->find($request->query->get('me'));
 
         if ($request->isMethod('POST')) {
@@ -34,10 +40,21 @@ class VoteController extends Controller
         ]);
     }
 
+    public function settingsAction(Request $request)
+    {
+        /** @var VotingService $votingService */
+        $votingService = $this->get('mdv.voting.service');
 
-//        /** @var VotingService $votingService */
-//        $votingService = $this->get('mdv.voting.service');
-//        $votingService->handleClose();
-//        $votingService->handleOpen();
-//        die;
+        if ($request->isMethod('POST')) {
+            if ($request->request->get('open')) {
+                $votingService->handleOpen();
+            } else {
+                $votingService->handleClose();
+            }
+        }
+
+        return $this->render('MDVPriorityBundle:Default:settings.html.twig', [
+            'open' => $votingService->isOpen()
+        ]);
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace MDV\PriorityBundle\Repository;
 use Doctrine\ORM\Query;
+use MDV\PriorityBundle\Entity\Issue;
 use MDV\PriorityBundle\Entity\Vote;
 
 /**
@@ -13,17 +14,24 @@ use MDV\PriorityBundle\Entity\Vote;
 class VoteRepository extends \Doctrine\ORM\EntityRepository
 {
     /**
-     * Retrieve nr. votes
+     * Retrieve nr. votes (if issue is given, specific for issue)
      *
      * @return int
      */
-    public function getTotalVotes()
+    public function getTotalVotes(Issue $issue = null)
     {
         $alias = __CLASS__;
         $qb = $this->createQueryBuilder($alias);
         $qb->select("SUM({$alias}.vote)");
+
+        if (null !== $issue) {
+            $qb->where("{$alias}.issue = :issue");
+            $qb->setParameter('issue', $issue);
+        }
+
         return (int)$qb->getQuery()->execute(null, Query::HYDRATE_SINGLE_SCALAR);
     }
+
 
     /**
      * @param Vote $vote

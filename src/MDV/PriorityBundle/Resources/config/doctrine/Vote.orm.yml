@@ -18,6 +18,7 @@ MDV\PriorityBundle\Entity\Vote:
             joinColumn:
                 name: issue_id
                 referencedColumnName: id
+                onDelete: cascade
         stakeholder:
             targetEntity: Stakeholder
             inversedBy: votes

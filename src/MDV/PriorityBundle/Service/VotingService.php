@@ -5,9 +5,11 @@ namespace MDV\PriorityBundle\Service;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityRepository;
 use MDV\PriorityBundle\Entity\Issue;
+use MDV\PriorityBundle\Entity\Priority;
 use MDV\PriorityBundle\Entity\Stakeholder;
 use MDV\PriorityBundle\Entity\Vote;
 use MDV\PriorityBundle\Repository\IssueRepository;
+use MDV\PriorityBundle\Repository\PriorityRepository;
 use MDV\PriorityBundle\Repository\SettingsRepository;
 use MDV\PriorityBundle\Repository\StakeholderRepository;
 use MDV\PriorityBundle\Repository\VoteRepository;
@@ -27,6 +29,8 @@ class VotingService
     protected $stakeholderRepository;
     /** @var VoteRepository */
     protected $voteRepository;
+    /** @var  PriorityRepository */
+    protected $priorityRepository;
     /** @var JiraService */
     protected $jiraService;
     /** @var Filesystem */
@@ -48,7 +52,8 @@ class VotingService
         $this->settingsRepository = $doctrineRegistry->getRepository('MDVPriorityBundle:Settings');
         $this->issueRepository = $doctrineRegistry->getRepository('MDVPriorityBundle:Issue');
         $this->voteRepository = $doctrineRegistry->getRepository('MDVPriorityBundle:Vote');
-        $this->stakeholderRepository = $doctrineRegistry->getRepository('MDVPriorityBundle:Stakeholder');;
+        $this->stakeholderRepository = $doctrineRegistry->getRepository('MDVPriorityBundle:Stakeholder');
+        $this->priorityRepository = $doctrineRegistry->getRepository('MDVPriorityBundle:Priority');
         $this->jiraService = $jiraService;
         $this->fileSystem = $fileSystem;
     }
@@ -120,6 +125,43 @@ class VotingService
      */
     public function handleClose()
     {
+        $issues = $this->issueRepository->findAll();
+        $priorities = [];
+        $sumTotalValue = $sumRisk = $sumCost = 0;
+
+        // Hydrate fields from JIRA + make sums
+        foreach($issues as $issue) {
+            $priority = $this->jiraService->hydratePriority($issue);
+            $priority->setPositiveValue($this->voteRepository->getTotalVotes($issue));
+            $priority->setTotalValue((int)$priority->getPositiveValue() + (int)$priority->getNegativeValue());
+
+            $sumTotalValue += (int)$priority->getTotalValue();
+            $sumRisk += (int)$priority->getRisk();
+            $sumCost += (int)$priority->getCost();
+
+            $priorities[] = $priority;
+        }
+
+        /** @var Priority $priority */
+        foreach($priorities as $priority) {
+            $totalValuePercentage = ($sumTotalValue > 0 ? (int)$priority->getTotalValue()/ $sumTotalValue * 100 : 0);
+            $priority->setTotalValuePercentage($totalValuePercentage);
+
+            $costPercentage = ($sumCost > 0 ? (int)$priority->getCost() / $sumCost * 100 : 0);
+            $priority->setCostPercentage($costPercentage);
+
+            $riskPercentage = ($sumRisk > 0 ? (int)$priority->getRisk() / $sumRisk * 100 : 0);
+            $priority->setRiskPercentage($riskPercentage);
+
+            $priority->setPriority(
+                $priority->getTotalValuePercentage() /
+                ($priority->getCostPercentage() + $priority->getRiskPercentage() * 0.5)
+            );
+            $this->priorityRepository->persist($priority);
+        }
+
+        $this->priorityRepository->flush();
+
         $this->fileSystem->remove($this->votingOpenFile);
 
         return;

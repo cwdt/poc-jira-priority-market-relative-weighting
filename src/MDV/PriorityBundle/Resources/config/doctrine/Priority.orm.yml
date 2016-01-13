@@ -1,0 +1,36 @@
+MDV\PriorityBundle\Entity\Priority:
+    type: entity
+    table: null
+    repositoryClass: MDV\PriorityBundle\Repository\PriorityRepository
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        positiveValue:
+            type: integer
+        negativeValue:
+            type: integer
+        totalValue:
+            type: integer
+        totalValuePercentage:
+            type: float
+        cost:
+            type: integer
+        costPercentage:
+            type: float
+        risk:
+            type: integer
+        riskPercentage:
+            type: float
+        priority:
+            type: float
+    oneToOne:
+        issue:
+          targetEntity: Issue
+          joinColumn:
+            name: issue_id
+            referencedColumnName: id
+    lifecycleCallbacks: {  }

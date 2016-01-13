@@ -5,6 +5,8 @@ namespace MDV\PriorityBundle\Service;
 use Doctrine\ORM\EntityRepository;
 use JiraApiBundle\Service\IssueService;
 use JiraApiBundle\Service\SearchService;
+use MDV\PriorityBundle\Entity\Issue;
+use MDV\PriorityBundle\Entity\Priority;
 
 /**
  * Class JiraService
@@ -12,6 +14,11 @@ use JiraApiBundle\Service\SearchService;
  */
 class JiraService
 {
+    /** TODO make configurable */
+    const COST_FIELD = 'customfield_10002';
+    const RISK_FIELD = 'customfield_10010';
+    const NEGATIVE_VALUE_FIELD = 'customfield_10011';
+
     /**
      * @var SearchService
      */
@@ -70,5 +77,25 @@ class JiraService
         }
 
         return $this->issueCache[$key]['fields']['summary'];
+    }
+
+    /**
+     * @param Issue $issue
+     * @return Priority
+     */
+    public function hydratePriority(Issue $issue)
+    {
+        $jiraIssue = $this->issueService->get($issue->getJiraKey());
+
+        // TODO check if issue still exists
+
+        if (!$priority = $issue->getPriority()) {
+            $priority = new Priority();
+        }
+        $priority->setIssue($issue);
+        $priority->setCost((int)$jiraIssue['fields'][self::COST_FIELD]['value']);
+        $priority->setNegativeValue((int)$jiraIssue['fields'][self::NEGATIVE_VALUE_FIELD]['value']);
+        $priority->setRisk((int)$jiraIssue['fields'][self::RISK_FIELD]['value']);
+        return $priority;
     }
 }

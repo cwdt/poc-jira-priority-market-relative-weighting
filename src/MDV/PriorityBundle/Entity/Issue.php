@@ -27,6 +27,10 @@ class Issue
      */
     private $summary;
 
+    /**
+     * @var Priority
+     */
+    private $priority;
 
     /**
      * Get id
@@ -92,6 +96,22 @@ class Issue
     public function setSummary($summary)
     {
         $this->summary = $summary;
+    }
+
+    /**
+     * @return Priority
+     */
+    public function getPriority()
+    {
+        return $this->priority;
+    }
+
+    /**
+     * @param Priority $priority
+     */
+    public function setPriority($priority)
+    {
+        $this->priority = $priority;
     }
 }
 

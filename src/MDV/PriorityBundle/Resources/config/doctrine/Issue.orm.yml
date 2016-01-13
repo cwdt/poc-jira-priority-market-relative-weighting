@@ -20,4 +20,8 @@ MDV\PriorityBundle\Entity\Issue:
         votes:
             targetEntity: Vote
             mappedBy: issue
+    oneToOne:
+        priority:
+          targetEntity: Priority
+          mappedBy: issue
     lifecycleCallbacks: {  }

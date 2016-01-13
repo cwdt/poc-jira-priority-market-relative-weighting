@@ -1,0 +1,9 @@
+<form method="POST">
+    {% if open %}
+        <input type="hidden" value="0" name="open">
+        <input type="submit" value="Close voting" />
+    {% else %}
+        <input type="hidden" value="1" name="open">
+        <input type="submit" value="Open voting" />
+    {% endif %}
+</form>
