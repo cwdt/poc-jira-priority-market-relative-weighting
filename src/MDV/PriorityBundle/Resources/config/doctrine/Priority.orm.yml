@@ -30,6 +30,7 @@ MDV\PriorityBundle\Entity\Priority:
     oneToOne:
         issue:
           targetEntity: Issue
+          inversedBy: priority
           joinColumn:
             name: issue_id
             referencedColumnName: id
