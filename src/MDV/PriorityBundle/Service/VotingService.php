@@ -188,7 +188,6 @@ class VotingService
         }
 
         foreach($votes as $key => $value) {
-            // @TODO make more efficient
             $issue = $this->issueRepository->findOneBy(['jiraKey' => $key]);
             $vote = $this->voteRepository->findOneBy([
                 'issue' => $issue,

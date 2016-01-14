@@ -38,6 +38,7 @@ twig:
     strict_variables: "%kernel.debug%"
     globals:
         jira_base_url: "%jira_base_url%"
+        app_title: "%app_title%"
 
 # Doctrine Configuration
 doctrine:

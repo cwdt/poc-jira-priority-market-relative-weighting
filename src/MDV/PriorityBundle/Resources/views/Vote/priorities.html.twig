@@ -1,0 +1,57 @@
+{% extends "::base.html.twig" %}
+{% block body %}
+
+<div class="starter-template">
+    <h1>Calculated priority</h1>
+    <p class="lead">The Stakeholders have spoken.</p>
+</div>
+
+<table class="table table-striped priority">
+    <tr>
+        <th>
+        </th>
+        <th>
+            Business Value - benefit
+        </th>
+        <th>
+            Business Value - penalty
+        </th>
+        <th>
+            Total Business Value
+        </th>
+        <th>
+            Value %
+        </th>
+        <th>
+            Cost
+        </th>
+        <th>
+            Cost %
+        </th>
+        <th>
+            Technical risk
+        </th>
+        <th>
+            Risk %
+        </th>
+        <th>
+            Priority
+        </th>
+    </tr>
+    {% for issue in issues %}
+        <tr>
+            <td>{{ issue.summary }} (<a href="{{ jira_base_url }}/browse/{{ issue.jiraKey }}" target="_blank">{{ issue.jiraKey }}</a>)</td>
+            <td class="col-md-1">{{ issue.priority.positiveValue }}</td>
+            <td class="col-md-1">{{ issue.priority.negativeValue }}</td>
+            <td class="col-md-1">{{ issue.priority.totalValue }}</td>
+            <td class="col-md-1">{{ issue.priority.totalValuePercentage|round(2) }}</td>
+            <td class="col-md-1">{{ issue.priority.cost }}</td>
+            <td class="col-md-1">{{ issue.priority.costPercentage|round(2) }}</td>
+            <td class="col-md-1">{{ issue.priority.risk }}</td>
+            <td class="col-md-1">{{ issue.priority.riskPercentage|round(2) }}</td>
+            <td class="col-md-1">{{  issue.priority.priority|round(2) }}</td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}
+

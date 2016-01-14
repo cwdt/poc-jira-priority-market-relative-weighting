@@ -33,4 +33,5 @@ MDV\PriorityBundle\Entity\Priority:
           joinColumn:
             name: issue_id
             referencedColumnName: id
+            onDelete: cascade
     lifecycleCallbacks: {  }

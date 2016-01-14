@@ -21,3 +21,4 @@ parameters:
     jira_base_url: FillThisIn
     jira_user: FillThisIn
     jira_password: FillThisIn
+    app_title: Proof of Concept

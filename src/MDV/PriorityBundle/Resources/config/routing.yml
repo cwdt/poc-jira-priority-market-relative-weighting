@@ -1,7 +1,13 @@
-mdv_priority_homepage:
-    path:     /
+
+mdv_priority_voting:
+    path:     /voting
     defaults: { _controller: MDVPriorityBundle:Vote:index }
+
 
 mdv_priority_settings:
     path:     /settings
     defaults: { _controller: MDVPriorityBundle:Vote:settings }
+
+mdv_priority_priorities:
+    path:     /priorities
+    defaults: { _controller: MDVPriorityBundle:Vote:priorities }

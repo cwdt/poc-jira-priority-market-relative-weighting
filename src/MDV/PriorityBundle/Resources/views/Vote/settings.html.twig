@@ -1,0 +1,21 @@
+
+
+
+{% extends "::base.html.twig" %}
+{% block body %}
+
+    <div class="starter-template">
+
+        <form method="POST">
+            {% if open %}
+                <input type="hidden" value="0" name="open">
+                <input type="submit" class="btn btn-lg btn-primary" value="Close voting" />
+            {% else %}
+                <input type="hidden" value="1" name="open">
+                <input type="submit" class="btn btn-lg btn-primary"  value="Open voting" />
+            {% endif %}
+        </form>
+
+    </div>
+
+{% endblock %}

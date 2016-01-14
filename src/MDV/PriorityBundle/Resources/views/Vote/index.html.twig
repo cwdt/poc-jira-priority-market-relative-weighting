@@ -1,0 +1,94 @@
+{% extends "::base.html.twig" %}
+{% block body %}
+
+
+    <div class="starter-template">
+        <h1>Hello, {{ me.name }}</h1>
+
+        <p class="lead">Cast your votes below.</p>
+    </div>
+    <form method="POST" class="form-inline">
+        <table class="table table-striped">
+            <tr>
+                <td></td>
+                {% for id, stakeholder in grid.stakeholders %}
+                    <td>
+                        {% if id == me.id %}
+                            <strong>{{ stakeholder.name }}</strong> <br >
+                            <i>You have <span id="nr_votes">{{ stakeholder.allowedVotes }}</span> votes</i>
+                        {% else %}
+                            {{ stakeholder.name }}<br />
+                            <i>{{ stakeholder.allowedVotes }} votes</i>
+                        {% endif %}
+                    </td>
+                {% endfor %}
+            </tr>
+            {% for issue in grid.issues %}
+                <tr>
+                    <td class="col-md-2">{{ issue.summary }} (<a href="{{ jira_base_url }}/browse/{{ issue.key }}" target="_blank">{{ issue.key }}</a>)</td>
+                    {% for id, stakeholder in grid.stakeholders %}
+                        <td class="col-md-2">
+                            {% if id == me.id %}
+                                <input type="number" class="form-control vote" name="votes[{{ issue.key }}]"
+                                       value="{{ issue.stakeholders[id] }}" autocomplete="off"/>
+                            {% else %}
+                                {{ issue.stakeholders[id] }}
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            <tr>
+                <td></td>
+                {% for id, stakeholder in grid.stakeholders %}
+                    <td>
+                        {% if id == me.id %}
+                            <input type="submit" id="vote_button"  class="btn btn-primary" disabled value="Vote!"/>
+                        {% endif %}
+                    </td>
+                {% endfor %}
+            </tr>
+        </table>
+    </form>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+    <script>
+
+        function checkVotes(nrVotes) {
+            var actualVotes = 0;
+            $("input.vote").each(function () {
+                actualVotes += parseInt($(this).val());
+            });
+
+            if (nrVotes === actualVotes) {
+                $("#vote_button").prop('disabled', false);
+            } else {
+                $("#vote_button").prop("disabled", true);
+            }
+        }
+
+        $(document).ready(function () {
+            var nrVotes = parseInt($("#nr_votes").text());
+
+            // Check votes on page ready
+            checkVotes(nrVotes);
+
+            // Check votes on every keyup
+            $(".vote").keyup(function () {
+                // Check votes, enable button if given votes equals allowed votes
+                checkVotes(nrVotes);
+            });
+
+            // Only allow numeric input
+            $(".vote").change(function () {
+                var val = parseInt($(this).val());
+                if (isNaN(val)) {
+                    val = 0;
+                }
+                $(this).val(val);
+            });
+        });
+
+    </script>
+{% endblock %}

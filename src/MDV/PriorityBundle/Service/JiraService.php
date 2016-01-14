@@ -87,13 +87,11 @@ class JiraService
     {
         $jiraIssue = $this->issueService->get($issue->getJiraKey());
 
-        // TODO check if issue still exists
-
         if (!$priority = $issue->getPriority()) {
             $priority = new Priority();
         }
         $priority->setIssue($issue);
-        $priority->setCost((int)$jiraIssue['fields'][self::COST_FIELD]['value']);
+        $priority->setCost((int)$jiraIssue['fields'][self::COST_FIELD]);
         $priority->setNegativeValue((int)$jiraIssue['fields'][self::NEGATIVE_VALUE_FIELD]['value']);
         $priority->setRisk((int)$jiraIssue['fields'][self::RISK_FIELD]['value']);
         return $priority;
