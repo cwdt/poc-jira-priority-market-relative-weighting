@@ -34,7 +34,6 @@ class VoteController extends Controller
             ]);
         }
 
-
         if ($request->isMethod('POST')) {
             /** @var VotingService $votingService */
             $votingService = $this->get('mdv.voting.service');
@@ -43,6 +42,11 @@ class VoteController extends Controller
             } catch (\RuntimeException $e) {
                 throw $e;
             }
+
+            $request->getSession()
+                ->getFlashBag()
+                ->add('success', 'Your votes have been saved!')
+            ;
         }
 
         /** @var VoteGridService $gridService */
